@@ -92,6 +92,9 @@ class GestorFich {
 
         println("La lista de empleados ha sido actualizada.")
         escritorFich(listaEmpleados, file)
+        for (i in listaEmpleados){
+            println("ID: ${i.id}, Apellido: ${i.apellido}, Departamento: ${i.departamento}, Salario: ${i.salario}")
+        }
 
     }
     private fun lectorXML(file: File): MutableList<Empleado> {
