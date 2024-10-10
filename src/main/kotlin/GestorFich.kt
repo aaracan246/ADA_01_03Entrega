@@ -1,6 +1,7 @@
 package org.example
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.w3c.dom.Text
 import java.io.File
 import java.nio.file.Path
@@ -32,7 +33,7 @@ class GestorFich {
         return listaEmpleado.sortedBy { it.id }
     }
 
-    fun escritorFich(list: List<Empleado>){
+    fun escritorFich(list: List<Empleado>, file: File){
 
         val db = DocumentBuilderFactory.newInstance()
         val builder = db.newDocumentBuilder()
@@ -76,7 +77,7 @@ class GestorFich {
 
     fun modificarFich(file: File){
 
-        val listaEmpleados = lectorFich(file)
+        val listaEmpleados = lectorXML(file)
         val emplAModificar = encontrarEmpl(listaEmpleados)
 
         println("Por favor, introduzca el nuevo salario: ")
@@ -90,10 +91,47 @@ class GestorFich {
         emplAModificar?.salario = salarioNuevo
 
         println("La lista de empleados ha sido actualizada.")
-        escritorFich(listaEmpleados)
+        escritorFich(listaEmpleados, file)
 
     }
-    fun lectorXML(file: File){
+    private fun lectorXML(file: File): MutableList<Empleado> {
+        val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
+
+        val db = dbf.newDocumentBuilder()
+
+        val document = db.parse(file)
+
+        val root: Element = document.documentElement
+
+        root.normalize()
+
+        val listaNodos = root.getElementsByTagName("empleado")
+
+        val listaEmpleados = mutableListOf<Empleado>()
+
+        for (i in 0 until listaNodos.length){
+
+            val nodo = listaNodos.item(i)
+
+            if (nodo.nodeType == Node.ELEMENT_NODE){
+                val nodoElemento = nodo as Element
+
+                val id = nodoElemento.getAttribute("id").toIntOrNull() ?: 0
+                val elementoApellido = nodoElemento.getElementsByTagName("apellido")
+                val elementoDepartamento = nodoElemento.getElementsByTagName("departamento")
+                val elementoSalario = nodoElemento.getElementsByTagName("salario")
+
+                val textContentApellido = elementoApellido.item(0).textContent
+                val textContentDepartamento = elementoDepartamento.item(0).textContent
+                val textContentSalario = elementoSalario.item(0).textContent.toDouble()
+
+                val empleado = Empleado(id, textContentApellido, textContentDepartamento, textContentSalario)
+                listaEmpleados.add(empleado)
+            }
+
+        }
+        println(listaEmpleados)
+        return listaEmpleados
 
     }
 

@@ -8,10 +8,14 @@ fun main() {
 
     val gestorFich = GestorFich()
     val fich = File("C:\\Users\\UsuarioT\\PROG\\ADA\\ADA_01_03\\src\\main\\resources\\empleados.csv")
-    //val fichAModificar = File("C:\\Users\\UsuarioT\\PROG\\ADA\\ADA_01_03\\src\\main\\resources\\empleados2.xml")
+    val fichAModificar = File("C:\\Users\\UsuarioT\\PROG\\ADA\\ADA_01_03\\src\\main\\resources\\empleados2.xml")
 
-    val listaEmpleados = gestorFich.lectorFich(fich)
-    gestorFich.escritorFich(listaEmpleados)
+    if (!fichAModificar.exists()) {
+        val listaEmpleados = gestorFich.lectorFich(fich)
+        gestorFich.escritorFich(listaEmpleados, fichAModificar)
+    } else {
+        println("El archivo XML ya existe. Procediendo a modificarlo.")
+    }
 
-    gestorFich.modificarFich(fich)
+    gestorFich.modificarFich(fichAModificar)
 }
